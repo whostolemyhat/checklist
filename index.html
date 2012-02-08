@@ -12,7 +12,7 @@
 	ul {
 		margin:0;padding:0;
 		list-style-type:none;
-		width:600px;
+		width:800px;
 	}
 
 	li {
@@ -52,7 +52,8 @@
 	    	});
 
 	    	$(':checked').each(function() {
-	    		$(this).parent().addClass('selected');
+	    		$(this).parent().addClass('selected').css('background', '#ffe');
+	    		$(this).parent().find('label').css('textDecoration', 'line-through');
 	    	});
 	    });
 
