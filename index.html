@@ -44,6 +44,11 @@
 	    	$('#completed').text($('input:checked').length);
 
 	    	$('input').click(function() {
+	    		if(this.checked) {
+		    		$(this).parent().addClass('selected');
+	    		} else {
+	    			$(this).parent().removeClass('selected');
+	    		}
 	    		$('#completed').text($('input:checked').length);
 	    		var text = $('#checklist').values();
 	    		text = JSON.stringify(text);
