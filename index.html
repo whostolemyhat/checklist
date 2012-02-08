@@ -3,12 +3,40 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Game Checklist</title>
+	<style>
+	body {
+		color:#333;
+		font-family:Arial, Helvetica, sans-serif;
+	}
+
+	ul {
+		margin:0;padding:0;
+		list-style-type:none;
+		width:600px;
+	}
+
+	li {
+		padding:5px 10px;
+		margin:2px;
+	}
+
+	.selected {
+		background-color:#ffe;
+	}
+
+	.selected label {
+		text-decoration:line-through;
+	}
+
+	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	    $(document).ready(function() {
 	    	var cookieName = 'checklistCookie';
-	    	if(readCookie(cookieName)) {
-	    		console.log('cookie!');
+	    	var formData = readCookie(cookieName);
+
+	    	if(formData) {
+	    		$('#checklist').values($.parseJSON(formData));
 	    	}
 
 
@@ -17,12 +45,45 @@
 
 	    	$('input').click(function() {
 	    		$('#completed').text($('input:checked').length);
-	    		var text = $('#checklist').serialize();
+	    		var text = $('#checklist').values();
+	    		text = JSON.stringify(text);
 
 	    		createCookie(cookieName, text, 10000);
-	    		console.log(text);
+	    	});
+
+	    	$(':checked').each(function() {
+	    		$(this).parent().addClass('selected');
 	    	});
 	    });
+
+	    // http://stackoverflow.com/questions/1489486/jquery-plugin-to-serialize-a-form-and-also-restore-populate-the-form
+	    /* jQuery.values: get or set all of the name/value pairs from child input controls    * @argument data {array} If included, will populate all child controls. * @returns element if data was provided, or array of values if not*/
+	    $.fn.values = function(data) {
+	        var els = $(this).find(':input').get();
+			if(typeof data != 'object') {
+				// return all data		
+				data = {};
+				$.each(els, function() {
+					if (this.name && !this.disabled && (this.checked
+							|| /select|textarea/i.test(this.nodeName)	
+							|| /text|hidden|password/i.test(this.type))) {
+						data[this.name] = $(this).val();			
+					}
+				});	
+				return data;	
+			} else {	
+				$.each(els, function() {
+					if (this.name && data[this.name]) {	
+						if(this.type == 'checkbox') {
+							this.checked = (data[this.name] == $(this).val());
+						} else {
+							$(this).val(data[this.name]);
+						}
+					}		
+				});		
+				return $(this);	
+			}	
+		};
 
 	    //from http://www.quirksmode.org/js/cookies.html
 	    function createCookie(name, value, days) {
@@ -62,110 +123,111 @@
 
 </head>
 <body>
-	<h2><span id="completed">0</span> / <span id="total">100</span></h2>
+	<h2>Completed: <span id="completed">0</span> / <span id="total">100</span></h2>
 
 	<form id="checklist" action="" method="POST">
-		<input type="checkbox" name="0" value="true" /> Be inspired<br />
-		<input type="checkbox" name="1" value="true" /> Have an idea for a game<br />
-		<input type="checkbox" name="2" value="true" /> Throw out a game idea<br />
-		<input type="checkbox" name="3" value="true" /> Have an idea for a game you can actually make<br />
-		<input type="checkbox" name="4" value="true" /> Create a paper prototype<br />
-		<input type="checkbox" name="5" value="true" /> Create a digital prototype<br />
-		<input type="checkbox" name="6" value="true" /> Design a game<br />
-		<input type="checkbox" name="7" value="true" /> Program a game<br />
-		<input type="checkbox" name="8" value="true" /> Art a game<br />
-		<input type="checkbox" name="9" value="true" /> Have someone else play your game<br />
-		<input type="checkbox" name="10" value="true" /> &quot;Finish&quot; a game<br />
-		<input type="checkbox" name="11" value="true" /> Release a free browser game<br />
-		<input type="checkbox" name="12" value="true" /> Work by yourself<br />
-		<input type="checkbox" name="13" value="true" /> Work with friends<br />
-		<input type="checkbox" name="14" value="true" /> Follow a strict deadline<br />
-		<input type="checkbox" name="15" value="true" /> Scope down a game<br />
-		<input type="checkbox" name="16" value="true" /> Polish a game<br />
-		<input type="checkbox" name="17" value="true" /> Release a great game totally unlike the original idea<br />
-		<input type="checkbox" name="18" value="true" /> See people enjoy your game<br />
-		<input type="checkbox" name="19" value="true" /> Get a Twitter account<br />
-		<input type="checkbox" name="20" value="true" /> Make a game in 48 hours<br />
-		<input type="checkbox" name="21" value="true" /> Make a good game in 48 hours<br />
-		<input type="checkbox" name="22" value="true" /> REALLY finish a game<br />
-		<input type="checkbox" name="23" value="true" /> See people play your game for longer than five minutes<br />
-		<input type="checkbox" name="24" value="true" /> Hear about people playing your game when you're not in the room<br />
-		<input type="checkbox" name="25" value="true" /> Use your Twitter account<br />
-		<input type="checkbox" name="26" value="true" /> Make a game that uses the entire keyboard<br />
-		<input type="checkbox" name="27" value="true" /> Make a game that uses less than two buttons<br />
-		<input type="checkbox" name="28" value="true" /> Make a local multiplayer game<br />
-		<input type="checkbox" name="29" value="true" /> Make a touchscreen game<br />
-		<input type="checkbox" name="30" value="true" /> Start a devlog<br />
-		<input type="checkbox" name="31" value="true" /> Put secrets in a game<br />
-		<input type="checkbox" name="32" value="true" /> Get lost in your own game<br />
-		<input type="checkbox" name="33" value="true" /> Be surprised by your game<br />
-		<input type="checkbox" name="34" value="true" /> See a child playing your game<br />
-		<input type="checkbox" name="35" value="true" /> See a child enjoying your game<br />
-		<input type="checkbox" name="36" value="true" /> Hear people telling stories about your game<br />
-		<input type="checkbox" name="37" value="true" /> Release a mobile game<br />
-		<input type="checkbox" name="38" value="true" /> Release a game for money<br />
-		<input type="checkbox" name="39" value="true" /> Make a dollar<br />
-		<input type="checkbox" name="40" value="true" /> Get retweeted<br />
-		<input type="checkbox" name="41" value="true" /> Get reviewed<br />
-		<input type="checkbox" name="42" value="true" /> Get reviewed by a blog you haven't heard of<br />
-		<input type="checkbox" name="43" value="true" /> Get an email from a fan<br />
-		<input type="checkbox" name="44" value="true" /> Get retweeted by more than five people<br />
-		<input type="checkbox" name="45" value="true" /> Get on Steam<br />
-		<input type="checkbox" name="46" value="true" /> Get featured on Steam<br />
-		<input type="checkbox" name="47" value="true" /> Get featured on the App Store<br />
-		<input type="checkbox" name="48" value="true" /> Get video reviewed<br />
-		<input type="checkbox" name="49" value="true" /> Get enough reviews to be on Metacritic<br />
-		<input type="checkbox" name="50" value="true" /> Get on Joystiq<br />
-		<input type="checkbox" name="51" value="true" /> Get on Kotaku<br />
-		<input type="checkbox" name="52" value="true" /> Find people talking about your game in forums<br />
-		<input type="checkbox" name="53" value="true" /> Find people talking about strategy in your game<br />
-		<input type="checkbox" name="54" value="true" /> Find people talking about the world in your game<br />
-		<input type="checkbox" name="55" value="true" /> See people playing your game on YouTube<br />
-		<input type="checkbox" name="56" value="true" /> See speedruns of your game on YouTube<br />
-		<input type="checkbox" name="57" value="true" /> Hear someone cover your game's music<br />
-		<input type="checkbox" name="58" value="true" /> Read fanfiction about your game<br />
-		<input type="checkbox" name="59" value="true" /> See cosplay from your game<br />
-		<input type="checkbox" name="60" value="true" /> See people roleplaying in your game's universe<br />
-		<input type="checkbox" name="61" value="true" /> Get pursued by a major game studio<br />
-		<input type="checkbox" name="62" value="true" /> Turn down a major game studio<br />
-		<input type="checkbox" name="63" value="true" /> Design a piece of merch<br />
-		<input type="checkbox" name="64" value="true" /> Sell a piece of merch<br />
-		<input type="checkbox" name="65" value="true" /> Get referenced in an academic paper<br />
-		<input type="checkbox" name="66" value="true" /> Get into the IGF<br />
-		<input type="checkbox" name="67" value="true" /> Get retweeted by @brandonnn<br />
-		<input type="checkbox" name="68" value="true" /> Twitter stops feeling like you're screaming into a void<br />
-		<input type="checkbox" name="69" value="true" /> Go to GDC<br />
-		<input type="checkbox" name="70" value="true" /> Meet a hero<br />
-		<input type="checkbox" name="71" value="true" /> Win an IGF award<br />
-		<input type="checkbox" name="72" value="true" /> Need a lawyer<br />
-		<input type="checkbox" name="73" value="true" /> Start a studio<br />
-		<input type="checkbox" name="74" value="true" /> Give a talk to students<br />
-		<input type="checkbox" name="75" value="true" /> Make a remote multiplayer game<br />
-		<input type="checkbox" name="76" value="true" /> Release a game with a box<br />
-		<input type="checkbox" name="77" value="true" /> Release a game for a platform no one owns<br />
-		<input type="checkbox" name="78" value="true" /> Find out people bought a platform just to play your game<br />
-		<input type="checkbox" name="79" value="true" /> Release a game for a major console<br />
-		<input type="checkbox" name="80" value="true" /> Hear about people say they bought your new game because they loved your old game<br />
-		<input type="checkbox" name="81" value="true" /> See your game being played in the wild<br />
-		<input type="checkbox" name="82" value="true" /> Get mentioned in a Penny Arcade news post<br />
-		<input type="checkbox" name="83" value="true" /> Get a lawer<br />
-		<input type="checkbox" name="84" value="true" /> Get into the IGF more than once<br />
-		<input type="checkbox" name="85" value="true" /> Get recognized at GDC<br />
-		<input type="checkbox" name="86" value="true" /> Give a talk at GDC<br />
-		<input type="checkbox" name="87" value="true" /> Win the IGF grand prize<br />
-		<input type="checkbox" name="88" value="true" /> Work with a hero<br />
-		<input type="checkbox" name="89" value="true" /> Get mentioned on NPR<br />
-		<input type="checkbox" name="90" value="true" /> Get mentioned on TV<br />
-		<input type="checkbox" name="91" value="true" /> Have the ability to scope up<br />
-		<input type="checkbox" name="92" value="true" /> Fund someone else's game<br />
-		<input type="checkbox" name="93" value="true" /> See a cameo of your game's character in another game<br />
-		<input type="checkbox" name="94" value="true" /> Hear an orchestra play your game's music<br />
-		<input type="checkbox" name="95" value="true" /> See your game turned into a movie<br />
-		<input type="checkbox" name="96" value="true" /> Get recognized in real life<br />
-		<input type="checkbox" name="97" value="true" /> Get in a Penny Arcade comic<br />
-		<input type="checkbox" name="98" value="true" /> Be proud of your game<br />
-		<input type="checkbox" name="99" value="true" /> Know that your game is doing more good than harm<br />
+		<ul>
+			<li><input type="checkbox" name="0" id="0" value="true" /> <label for="0">Be inspired</label></li>
+			<li><input type="checkbox" name="1" id="1" value="true" /> <label for="1">Have an idea for a game</label></li>
+			<li><input type="checkbox" name="2" id="2" value="true" /> <label for="2">Throw out a game idea</label></li>
+			<li><input type="checkbox" name="3" id="3" value="true" /> <label for="3">Have an idea for a game you can actually make</label></li>
+			<li><input type="checkbox" name="4" id="4" value="true" /> <label for="4">Create a paper prototype</label></li>
+			<li><input type="checkbox" name="5" id="5" value="true" /> <label for="5">Create a digital prototype</label></li>
+			<li><input type="checkbox" name="6" id="6" value="true" /> <label for="6">Design a game</label></li>
+			<li><input type="checkbox" name="7" id="7" value="true" /> <label for="7">Program a game</label></li>
+			<li><input type="checkbox" name="8" id="8" value="true" /> <label for="8">Art a game</label></li>
+			<li><input type="checkbox" name="9" id="9" value="true" /> <label for="9">Have someone else play your game</label></li>
+			<li><input type="checkbox" name="10" id="10" value="true" /> <label for="10">&quot;Finish&quot; a game</label></li>
+			<li><input type="checkbox" name="11" id="11" value="true" /> <label for="11">Release a free browser game</label></li>
+			<li><input type="checkbox" name="12" id="12" value="true" /> <label for="12">Work by yourself</label></li>
+			<li><input type="checkbox" name="13" id="13" value="true" /> <label for="13">Work with friends</label></li>
+			<li><input type="checkbox" name="14" id="14" value="true" /> <label for="14">Follow a strict deadline</label></li>
+			<li><input type="checkbox" name="15" id="15" value="true" /> <label for="15">Scope down a game</label></li>
+			<li><input type="checkbox" name="16" id="16" value="true" /> <label for="16">Polish a game</label></li>
+			<li><input type="checkbox" name="17" id="17" value="true" /> <label for="17">Release a great game totally unlike the original idea</label></li>
+			<li><input type="checkbox" name="18" id="18" value="true" /> <label for="18">See people enjoy your game</label></li>
+			<li><input type="checkbox" name="19" id="19" value="true" /> <label for="19">Get a Twitter account</label></li>
+			<li><input type="checkbox" name="20" id="20" value="true" /> <label for="20">Make a game in 48 hours</label></li>
+			<li><input type="checkbox" name="21" id="21" value="true" /> <label for="21">Make a good game in 48 hours</label></li>
+			<li><input type="checkbox" name="22" id="22" value="true" /> <label for="22">REALLY finish a game</label></li>
+			<li><input type="checkbox" name="23" id="23" value="true" /> <label for="23">See people play your game for longer than five minutes</label></li>
+			<li><input type="checkbox" name="24" id="24" value="true" /> <label for="24">Hear about people playing your game when you're not in the room</label></li>
+			<li><input type="checkbox" name="25" id="25" value="true" /> <label for="25">Use your Twitter account</label></li>
+			<li><input type="checkbox" name="26" id="26" value="true" /> <label for="26">Make a game that uses the entire keyboard</label></li>
+			<li><input type="checkbox" name="27" id="27" value="true" /> <label for="27">Make a game that uses less than two buttons</label></li>
+			<li><input type="checkbox" name="28" id="28" value="true" /> <label for="28">Make a local multiplayer game</label></li>
+			<li><input type="checkbox" name="29" id="29" value="true" /> <label for="29">Make a touchscreen game</label></li>
+			<li><input type="checkbox" name="30" id="30" value="true" /> <label for="30">Start a devlog</label></li>
+			<li><input type="checkbox" name="31" id="31" value="true" /> <label for="31">Put secrets in a game</label></li>
+			<li><input type="checkbox" name="32" id="32" value="true" /> <label for="32">Get lost in your own game</label></li>
+			<li><input type="checkbox" name="33" id="33" value="true" /> <label for="33">Be surprised by your game</label></li>
+			<li><input type="checkbox" name="34" id="34" value="true" /> <label for="34">See a child playing your game</label></li>
+			<li><input type="checkbox" name="35" id="35" value="true" /> <label for="35">See a child enjoying your game</label></li>
+			<li><input type="checkbox" name="36" id="36" value="true" /> <label for="36">Hear people telling stories about your game</label></li>
+			<li><input type="checkbox" name="37" id="37" value="true" /> <label for="37">Release a mobile game</label></li>
+			<li><input type="checkbox" name="38" id="38" value="true" /> <label for="38">Release a game for money</label></li>
+			<li><input type="checkbox" name="39" id="39" value="true" /> <label for="39">Make a dollar</label></li>
+			<li><input type="checkbox" name="40" id="40" value="true" /> <label for="40">Get retweeted</label></li>
+			<li><input type="checkbox" name="41" id="41" value="true" /> <label for="41">Get reviewed</label></li>
+			<li><input type="checkbox" name="42" id="42" value="true" /> <label for="42">Get reviewed by a blog you haven't heard of</label></li>
+			<li><input type="checkbox" name="43" id="43" value="true" /> <label for="43">Get an email from a fan</label></li>
+			<li><input type="checkbox" name="44" id="44" value="true" /> <label for="44">Get retweeted by more than five people</label></li>
+			<li><input type="checkbox" name="45" id="45" value="true" /> <label for="45">Get on Steam</label></li>
+			<li><input type="checkbox" name="46" id="46" value="true" /> <label for="46">Get featured on Steam</label></li>
+			<li><input type="checkbox" name="47" id="47" value="true" /> <label for="47">Get featured on the App Store</label></li>
+			<li><input type="checkbox" name="48" id="48" value="true" /> <label for="48">Get video reviewed</label></li>
+			<li><input type="checkbox" name="49" id="49" value="true" /> <label for="49">Get enough reviews to be on Metacritic</label></li>
+			<li><input type="checkbox" name="50" id="50" value="true" /> <label for="50">Get on Joystiq</label></li>
+			<li><input type="checkbox" name="51" id="51" value="true" /> <label for="51">Get on Kotaku</label></li>
+			<li><input type="checkbox" name="52" id="52" value="true" /> <label for="52">Find people talking about your game in forums</label></li>
+			<li><input type="checkbox" name="53" id="53" value="true" /> <label for="53">Find people talking about strategy in your game</label></li>
+			<li><input type="checkbox" name="54" id="54" value="true" /> <label for="54">Find people talking about the world in your game</label></li>
+			<li><input type="checkbox" name="55" id="55" value="true" /> <label for="55">See people playing your game on YouTube</label></li>
+			<li><input type="checkbox" name="56" id="56" value="true" /> <label for="56">See speedruns of your game on YouTube</label></li>
+			<li><input type="checkbox" name="57" id="57" value="true" /> <label for="57">Hear someone cover your game's music</label></li>
+			<li><input type="checkbox" name="58" id="58" value="true" /> <label for="58">Read fanfiction about your game</label></li>
+			<li><input type="checkbox" name="59" id="59" value="true" /> <label for="59">See cosplay from your game</label></li>
+			<li><input type="checkbox" name="60" id="60" value="true" /> <label for="60">See people roleplaying in your game's universe</label></li>
+			<li><input type="checkbox" name="61" id="61" value="true" /> <label for="61">Get pursued by a major game studio</label></li>
+			<li><input type="checkbox" name="62" id="62" value="true" /> <label for="62">Turn down a major game studio</label></li>
+			<li><input type="checkbox" name="63" id="63" value="true" /> <label for="63">Design a piece of merch</label></li>
+			<li><input type="checkbox" name="64" id="64" value="true" /> <label for="64">Sell a piece of merch</label></li>
+			<li><input type="checkbox" name="65" id="65" value="true" /> <label for="65">Get referenced in an academic paper</label></li>
+			<li><input type="checkbox" name="66" id="66" value="true" /> <label for="66">Get into the IGF</label></li>
+			<li><input type="checkbox" name="67" id="67" value="true" /> <label for="67">Get retweeted by @brandonnn</label></li>
+			<li><input type="checkbox" name="68" id="68" value="true" /> <label for="68">Twitter stops feeling like you're screaming into a void</label></li>
+			<li><input type="checkbox" name="69" id="69" value="true" /> <label for="69">Go to GDC</label></li>
+			<li><input type="checkbox" name="70" id="70" value="true" /> <label for="70">Meet a hero</label></li>
+			<li><input type="checkbox" name="71" id="71" value="true" /> <label for="71">Win an IGF award</label></li>
+			<li><input type="checkbox" name="72" id="72" value="true" /> <label for="72">Need a lawyer</label></li>
+			<li><input type="checkbox" name="73" id="73" value="true" /> <label for="73">Start a studio</label></li>
+			<li><input type="checkbox" name="74" id="74" value="true" /> <label for="74">Give a talk to students</label></li>
+			<li><input type="checkbox" name="75" id="75" value="true" /> <label for="75">Make a remote multiplayer game</label></li>
+			<li><input type="checkbox" name="76" id="76" value="true" /> <label for="76">Release a game with a box</label></li>
+			<li><input type="checkbox" name="77" id="77" value="true" /> <label for="77">Release a game for a platform no one owns</label></li>
+			<li><input type="checkbox" name="78" id="78" value="true" /> <label for="78">Find out people bought a platform just to play your game</label></li>
+			<li><input type="checkbox" name="79" id="79" value="true" /> <label for="79">Release a game for a major console</label></li>
+			<li><input type="checkbox" name="80" id="80" value="true" /> <label for="80">Hear about people say they bought your new game because they loved your old game</label></li>
+			<li><input type="checkbox" name="81" id="81" value="true" /> <label for="81">See your game being played in the wild</label></li>
+			<li><input type="checkbox" name="82" id="82" value="true" /> <label for="82">Get mentioned in a Penny Arcade news post</label></li>
+			<li><input type="checkbox" name="83" id="83" value="true" /> <label for="83">Get a lawer</label></li>
+			<li><input type="checkbox" name="84" id="84" value="true" /> <label for="84">Get into the IGF more than once</label></li>
+			<li><input type="checkbox" name="85" id="85" value="true" /> <label for="85">Get recognized at GDC</label></li>
+			<li><input type="checkbox" name="86" id="86" value="true" /> <label for="86">Give a talk at GDC</label></li>
+			<li><input type="checkbox" name="87" id="87" value="true" /> <label for="87">Win the IGF grand prize</label></li>
+			<li><input type="checkbox" name="88" id="88" value="true" /> <label for="88">Work with a hero</label></li>
+			<li><input type="checkbox" name="89" id="89" value="true" /> <label for="89">Get mentioned on NPR</label></li>
+			<li><input type="checkbox" name="90" id="90" value="true" /> <label for="90">Get mentioned on TV</label></li>
+			<li><input type="checkbox" name="91" id="91" value="true" /> <label for="91">Have the ability to scope up</label></li>
+			<li><input type="checkbox" name="92" id="92" value="true" /> <label for="92">Fund someone else's game</label></li>
+			<li><input type="checkbox" name="93" id="93" value="true" /> <label for="93">See a cameo of your game's character in another game</label></li>
+			<li><input type="checkbox" name="94" id="94" value="true" /> <label for="94">Hear an orchestra play your game's music</label></li>
+			<li><input type="checkbox" name="95" id="95" value="true" /> <label for="95">See your game turned into a movie</label></li>
+			<li><input type="checkbox" name="96" id="96" value="true" /> <label for="96">Get recognized in real life</label></li>
+			<li><input type="checkbox" name="97" id="97" value="true" /> <label for="97">Get in a Penny Arcade comic</label></li>
+			<li><input type="checkbox" name="98" id="98" value="true" /> <label for="98">Be proud of your game</label></li>
+			<li><input type="checkbox" name="99" id="99" value="true" /> <label for="99">Know that your game is doing more good than harm</label></li>
+		</ul>
 	</form>
 </body>
 </html>
-
